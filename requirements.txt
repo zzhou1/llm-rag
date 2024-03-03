@@ -1,1 +1,5 @@
 gpt4all
+pypdf
+langchain
+langchain-community
+faiss-cpu

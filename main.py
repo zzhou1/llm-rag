@@ -11,7 +11,7 @@ from flask import Flask, render_template, request
 
 
 def set_up_embeddings():
-    embeddings = GPT4AllEmbeddings(model="/models/all-MiniLM-L6-v2-f16.gguf")
+    embeddings = GPT4AllEmbeddings()
 
     pdf_dir = 'pdfs'
     pdf_files = os.listdir(pdf_dir)
@@ -36,21 +36,22 @@ def invoke():
     question = request.form["input"]
     matched_docs = faiss_index.similarity_search(question, 4)
     context = ""
+    sources = set()
     for doc in matched_docs:
         context = context + doc.page_content + " \n\n " 
-
+        sources.add(doc.metadata["source"])
     llm = GPT4All(model="/models/mistral-7b-openorca.gguf2.Q4_0.gguf", max_tokens=2000)
 
     template = """
-    Please use the following context to answer questions.
+    Use the following context to answer questions, but don't be limited by it.
     Context: {context}
     - -
     Question: {question}
-    Answer: Let's think step by step."""
+    """
     prompt = PromptTemplate(template=template, input_variables=["context", "question"]).partial(context=context)
     llm_chain = LLMChain(prompt=prompt, llm=llm)
     answer = llm_chain.invoke(question)
-    return render_template('answer.html', question=question, answer=answer['text'], context=context)
+    return render_template('answer.html', question=question, answer=answer['text'], context=sources)
 
 @app.route('/')
 def index():

@@ -13,8 +13,12 @@
         <P>{{ question }}</P>
     <H2>Answer</H2>
         <P>{{ answer }}</P>
-    <H2>Context</H2>
+    <H2>Sources</H2>
     <P> {{ context }}</P>
+    <H2>Ask Another Question</H2>
+    <form action="{{ url_for('invoke') }}" method="post">
+        <input name="input" type="text" placeholder="Enter question" />
+      </form>
 </body>
 
 </html>

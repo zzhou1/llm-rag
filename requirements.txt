@@ -3,3 +3,4 @@ pypdf
 langchain
 langchain-community
 faiss-cpu
+flask

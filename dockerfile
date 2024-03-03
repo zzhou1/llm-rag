@@ -9,4 +9,8 @@ RUN mkdir -p /root/.cache/gpt4all
 COPY all-MiniLM-L6-v2-f16.gguf /root/.cache/gpt4all
 COPY pdfs /pdfs
 
+RUN mkdir /templates
+COPY templates/* /templates
 COPY main.py .
+
+ENTRYPOINT [ "python", "main.py" ]

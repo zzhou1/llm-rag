@@ -1,0 +1,5 @@
+gpt4all
+langchain
+langchain-community
+faiss-cpu
+flask

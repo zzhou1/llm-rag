@@ -1,34 +1,12 @@
-from langchain_community.document_loaders import PyPDFLoader
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain_community.llms import GPT4All
 from langchain_community.embeddings import GPT4AllEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.faiss import FAISS
-import os
 from flask import Flask, render_template, request
 
-
-
-def set_up_embeddings():
-    embeddings = GPT4AllEmbeddings()
-
-    pdf_dir = 'pdfs'
-    pdf_files = os.listdir(pdf_dir)
-
-    print("reading input files")
-    documents = []
-    for pdf_file in pdf_files:
-        if pdf_file.endswith('.pdf'):
-            print(f"    {pdf_file}")
-            pdf_path = os.path.join(pdf_dir, pdf_file)  
-            documents += PyPDFLoader(pdf_path).load_and_split()
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024,chunk_overlap=64)
-    texts = text_splitter.split_documents(documents)
-    return FAISS.from_documents(texts, embeddings)
-
-faiss_index = set_up_embeddings()
+embeddings = GPT4AllEmbeddings()
+faiss_index = FAISS.load_local("/", embeddings)
 app = Flask(__name__)
 
 @app.route('/render', methods=['POST'])

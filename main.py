@@ -6,7 +6,7 @@ from langchain.vectorstores.faiss import FAISS
 from flask import Flask, render_template, request
 
 embeddings = GPT4AllEmbeddings()
-faiss_index = FAISS.load_local("/", embeddings)
+faiss_index = FAISS.load_local("/", embeddings, allow_dangerous_deserialization=True)
 app = Flask(__name__)
 
 @app.route('/render', methods=['POST'])
